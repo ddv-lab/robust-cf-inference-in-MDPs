@@ -467,7 +467,7 @@ def main():
         mdp.value_iteration()
 
         with open(f"interval_CFMDPs.pickle", "rb") as f:
-            interval_CFMDPs_both_assumptions = pickle.load(f)
+            interval_CFMDPs = pickle.load(f)
 
         with open(f"obs_trajectories.pickle", "rb") as f:
             obs_trajectories = pickle.load(f)
@@ -475,7 +475,7 @@ def main():
         for i, trajectory in enumerate(obs_trajectories):
             print(trajectory)
 
-            interval_CFMDP = interval_CFMDPs_both_assumptions[i]
+            interval_CFMDP = interval_CFMDPs[i]
             n_timesteps = len(trajectory)
             n_states = 16
             n_actions = 4

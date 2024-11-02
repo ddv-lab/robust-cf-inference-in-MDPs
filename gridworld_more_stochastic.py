@@ -555,9 +555,6 @@ def main():
         for i in range(NUM_OBS_PATHS):
             trajectories.append(mdp.sample_random_trajectory())
 
-        # with open(f"executiontimegridworld4trajectories.pickle", "rb") as f:
-        #     trajectories = pickle.load(f)
-
         for i in range(NUM_OBS_PATHS):
             trajectory = trajectories[i]
 

@@ -829,59 +829,6 @@ def normalise(interval_CF_MDP, n_timesteps, n_states, n_actions):
     return interval_CF_MDP
 
 
-def normalise2(interval_CF_MDP, n_timesteps, n_states, n_actions):
-    interval_CF_MDP[:, :, :, :, 0] = np.round(interval_CF_MDP[:, :, :, :, 0], 13)
-
-    for t in range(n_timesteps):
-        for s in range(n_states):
-            for a in range(n_actions):
-                ub_threshold = 1.0000000000000000
-                lb_threshold = 1.0000000000000000
-
-                i = 0
-
-                while sum(interval_CF_MDP[t, s, a, :, 0]) > lb_threshold:
-                    print(f"iter i {i} s={s} a={a} lb={interval_CF_MDP[t, s, a, :, 0]} sum={sum(interval_CF_MDP[t, s, a, :, 0])}")
-        
-                    interval_CF_MDP[t, s, a, :, 0] = interval_CF_MDP[t, s, a, :, 0] / sum(interval_CF_MDP[t, s, a, :, 0]) # max(1.000000000000001, sum(interval_CF_MDP[t, s, a, :, 0]))
-                    
-                    print(f"iter i {i} s={s} a={a} lb={interval_CF_MDP[t, s, a, :, 0]} sum={sum(interval_CF_MDP[t, s, a, :, 0])}")
-
-                    if sum(interval_CF_MDP[t, s, a, :, 0]) > lb_threshold:
-                        print(f"iter i {i} s={s} a={a} lb={interval_CF_MDP[t, s, a, :, 0]} sum={sum(interval_CF_MDP[t, s, a, :, 0])}")
-                    i += 1
-                
-                i=0
-                while sum(interval_CF_MDP[t, s, a, :, 1]) < ub_threshold:
-                    print(f"iter {i} s={s} a={a} ub={interval_CF_MDP[t, s, a, :, 1]} sum={sum(interval_CF_MDP[t, s, a, :, 1])}")
-            
-                    interval_CF_MDP[t, s, a, :, 1] = interval_CF_MDP[t, s, a, :, 1] / sum(interval_CF_MDP[t, s, a, :, 1]) # min(0.999999999999999, sum(interval_CF_MDP[t, s, a, :, 1]))
-                    
-                    print(f"iter {i} s={s} a={a} ub={interval_CF_MDP[t, s, a, :, 1]} sum={sum(interval_CF_MDP[t, s, a, :, 1])}")
-
-                    if sum(interval_CF_MDP[t, s, a, :, 1]) < ub_threshold:
-                        print(f"iter {i} s={s} a={a} ub={interval_CF_MDP[t, s, a, :, 1]} sum={sum(interval_CF_MDP[t, s, a, :, 1])}")
-                    i += 1
-
-                if sum(interval_CF_MDP[t, s, a, :, 1]) < ub_threshold:
-                    print(f"s={s} a={a} ub={interval_CF_MDP[t, s, a, :, 1]} sum={sum(interval_CF_MDP[t, s, a, :, 1])}")
-
-                if sum(interval_CF_MDP[t, s, a, :, 0]) > lb_threshold:
-                    print(f"s={s} a={a} lb={interval_CF_MDP[t, s, a, :, 0]} sum={sum(interval_CF_MDP[t, s, a, :, 0])}")
-
-                assert(sum(interval_CF_MDP[t, s, a, :, 1]) >= ub_threshold)
-                assert(sum(interval_CF_MDP[t, s, a, :, 0]) <= lb_threshold)
-
-    epsilon = 1e-16
-    nonzero_mask = interval_CF_MDP[:, :, :, :, 0] != 0.0
-    # This adjustment ensure the probs are valid (i.e., that all UBs are > LBs)
-    interval_CF_MDP[nonzero_mask, 0] -= epsilon
-    nonzero_mask = interval_CF_MDP[:, :, :, :, 1] != 0.0
-    interval_CF_MDP[nonzero_mask, 1] += epsilon
-
-    return interval_CF_MDP
-
-
 def main():
     if len(sys.argv) < 2:
         print("Usage: python sepsis.py <function_name>")
